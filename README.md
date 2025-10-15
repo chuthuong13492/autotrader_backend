@@ -3,7 +3,6 @@
 [![Java](https://img.shields.io/badge/Java-17-orange.svg)](https://www.oracle.com/java/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-green.svg)](https://spring.io/projects/spring-boot)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-blue.svg)](https://www.postgresql.org/)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 A modern, high-performance car trading platform built with **Spring Boot 3**, **Clean Architecture**, and **PostgreSQL**. Features advanced search, filtering, and a type-safe error handling system using the **Either pattern**.
 

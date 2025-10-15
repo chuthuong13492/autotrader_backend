@@ -63,8 +63,6 @@ public class CarController {
         log.info("Searching cars with filters - value: {}, minPrice: {}, maxPrice: {}, makes: {}, models: {}, trims: {}, bodyTypes: {}, transmission: {}, sort: {}, page: {}, size: {}", 
                 value, minPrice, maxPrice, selectedMakes, selectedModels, selectedTrims, selectedBodyTypes, selectedTransmission, sort, page, size);
         
-        // Build filter criteria with NAMES (not UUIDs)
-        // Since we use car_listings view, we filter by denormalized names
         CarFilterCriteria criteria = CarFilterCriteria.builder()
                 .value(value)
                 .minPrice(minPrice)
