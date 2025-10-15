@@ -1,218 +1,308 @@
-# AutoTrader - Spring Boot Clean Architecture
+# 🚗 AutoTrader - Modern Car Trading Platform
 
-Dự án AutoTrader được xây dựng theo chuẩn Clean Architecture với Spring Boot và PostgreSQL.
+[![Java](https://img.shields.io/badge/Java-17-orange.svg)](https://www.oracle.com/java/)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-green.svg)](https://spring.io/projects/spring-boot)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-blue.svg)](https://www.postgresql.org/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-## 🏗️ Cấu trúc Clean Architecture
+A modern, high-performance car trading platform built with **Spring Boot 3**, **Clean Architecture**, and **PostgreSQL**. Features advanced search, filtering, and a type-safe error handling system using the **Either pattern**.
+
+## ✨ Features
+
+### 🏗️ Architecture
+- **Clean Architecture** with clear separation of concerns
+- **Domain-Driven Design** (DDD) principles
+- **Repository Pattern** with JPA Specifications
+- **Either Pattern** for type-safe error handling
+- **Database Views** for optimized read operations
+
+### 🚀 Performance
+- **Single Query** for car listings (vs 31+ queries with traditional approach)
+- **Database Views** with pre-computed JOINs
+- **JPA Specifications** for dynamic filtering
+- **Pagination** and **Sorting** support
+
+### 🎯 Core Features
+- **Advanced Car Search** with multiple filters
+- **Real-time Filtering** by make, model, trim, body type, transmission
+- **Price Range** filtering
+- **Text Search** across make, model, trim names
+- **Featured Cars** highlighting
+- **Car Details** with comprehensive information
+- **Badge System** for special offers
+
+### 🛡️ Error Handling
+- **Type-safe Either pattern** instead of exceptions
+- **Specific error codes** and messages
+- **Consistent API responses**
+- **Automatic HTTP status mapping**
+
+## 🏛️ Architecture Overview
 
 ```
-src/main/java/com/example/autotrader/
-├── domain/                    # Domain Layer - Business Logic Core
-│   ├── entities/             # Domain Entities
-│   │   └── Car.java         # Car Entity
-│   └── repositories/         # Repository Interfaces
-│       └── CarRepository.java
-├── application/              # Application Layer - Use Cases
-│   ├── dtos/                # Application DTOs
-│   │   ├── CarDto.java
-│   │   └── CarListResponseDto.java
-│   └── usecases/            # Use Case Interfaces & Implementations
-│       └── GetCarListUseCase.java
-├── infrastructure/          # Infrastructure Layer - External Concerns
-│   ├── config/              # Configuration
-│   │   ├── ApplicationConfig.java
-│   │   └── DataInitializer.java
-│   └── repositories/        # Repository Implementations
-│       ├── CarRepositoryImpl.java
-│       └── CarJpaRepository.java
-└── presentation/            # Presentation Layer - Controllers & DTOs
-    ├── controllers/         # REST Controllers
-    │   ├── CarController.java
-    │   └── GlobalExceptionHandler.java
-    └── dtos/               # Presentation DTOs
-        ├── CarRequestDto.java
-        ├── CarResponseDto.java
-        └── ApiResponse.java
+┌─────────────────────────────────────────────────────────────┐
+│                    Presentation Layer                       │
+│  - REST Controllers                                          │
+│  - Request/Response DTOs                                     │
+│  - EitherResponseHelper for clean error handling             │
+└─────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────┐
+│                    Application Layer                        │
+│  - Use Cases (Business Logic)                               │
+│  - DTOs for data transfer                                   │
+│  - Either<Failure, T> return types                          │
+└─────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────┐
+│                      Domain Layer                           │
+│  - Entities                                                  │
+│  - Repository Interfaces                                    │
+│  - Business Rules                                           │
+└─────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────┐
+│                   Infrastructure Layer                      │
+│  - JPA Repositories                                         │
+│  - Database Specifications                                  │
+│  - Configuration                                            │
+│  - Database Views                                           │
+└─────────────────────────────────────────────────────────────┘
 ```
 
-## 🚀 Cài đặt và Chạy
+## 🚀 Quick Start
 
-### 1. Khởi động PostgreSQL
+### Prerequisites
+- **Java 17+**
+- **Maven 3.8+**
+- **PostgreSQL 15+**
+- **Docker** (optional)
 
+### 1. Clone the Repository
 ```bash
-docker run --name my-postgres \
-  -e POSTGRES_USER=postgres \
-  -e POSTGRES_PASSWORD=postgres \
-  -e POSTGRES_DB=testdb \
-  -p 5432:5432 \
-  -d postgres
+git clone https://github.com/yourusername/autotrader.git
+cd autotrader
 ```
 
-### 2. Chạy ứng dụng
-
+### 2. Database Setup
 ```bash
-# Maven
+# Create database
+createdb autotrader
+
+# Run schema
+psql -d autotrader -f database-schema.sql
+```
+
+### 3. Configuration
+Update `src/main/resources/application.properties`:
+```properties
+spring.datasource.url=jdbc:postgresql://localhost:5432/autotrader
+spring.datasource.username=your_username
+spring.datasource.password=your_password
+```
+
+### 4. Run the Application
+```bash
+# Using Maven
 ./mvnw spring-boot:run
 
-# Hoặc build và chạy JAR
+# Or build and run
 ./mvnw clean package
 java -jar target/autotrader-0.0.1-SNAPSHOT.jar
 ```
 
-### 3. Truy cập ứng dụng
+### 5. Test the API
+```bash
+# Health check
+curl http://localhost:8080/api/v1/cars/health
 
-- **Base URL**: http://localhost:8080
-- **API Documentation**: Swagger UI (nếu có)
+# Search cars
+curl "http://localhost:8080/api/v1/cars/search?page=0&size=10"
+```
 
-## 📚 API Endpoints
+## 📚 API Documentation
 
-### 1. Lấy danh sách tất cả xe
-
+### Search Cars
 ```http
-GET /api/v1/cars
+GET /api/v1/cars/search
 ```
 
 **Query Parameters:**
-- `page` (default: 0): Số trang
-- `size` (default: 10): Số lượng xe mỗi trang
-- `sortBy` (default: id): Trường sắp xếp
-- `sortDir` (default: asc): Hướng sắp xếp (asc/desc)
+- `value` - Search text (make, model, trim)
+- `minPrice` - Minimum price
+- `maxPrice` - Maximum price
+- `selectedMakes` - Make names (comma-separated)
+- `selectedModels` - Model names (comma-separated)
+- `selectedTrims` - Trim names (comma-separated)
+- `selectedBodyTypes` - Body type names (comma-separated)
+- `selectedTransmission` - Transmission type
+- `sort` - Sort option (relevance, price-asc, price-desc, year-asc, year-desc, mileage-asc, mileage-desc)
+- `page` - Page number (0-based)
+- `size` - Page size (1-100)
 
-**Ví dụ:**
+**Example:**
 ```bash
-curl "http://localhost:8080/api/v1/cars?page=0&size=5&sortBy=price&sortDir=desc"
+curl "http://localhost:8080/api/v1/cars/search?selectedMakes=Toyota,Honda&minPrice=10000&maxPrice=50000&sort=price-asc&page=0&size=20"
 ```
 
-### 2. Lấy danh sách xe theo brand
-
+### Get Car Detail
 ```http
-GET /api/v1/cars/brand/{brand}
+GET /api/v1/cars/{id}
 ```
 
-**Ví dụ:**
+**Example:**
 ```bash
-curl "http://localhost:8080/api/v1/cars/brand/Toyota?page=0&size=10"
+curl http://localhost:8080/api/v1/cars/550e8400-e29b-41d4-a716-446655440000
 ```
 
-### 3. Lấy danh sách xe theo khoảng giá
+## 🎯 Either Pattern Usage
 
-```http
-GET /api/v1/cars/price-range?minPrice={minPrice}&maxPrice={maxPrice}
-```
-
-**Ví dụ:**
-```bash
-curl "http://localhost:8080/api/v1/cars/price-range?minPrice=300000000&maxPrice=500000000&page=0&size=10"
-```
-
-### 4. Health Check
-
-```http
-GET /api/v1/cars/health
-```
-
-## 📊 Response Format
-
-Tất cả API đều trả về format chuẩn:
-
-```json
-{
-  "success": true,
-  "message": "Lấy danh sách xe thành công",
-  "data": {
-    "cars": [
-      {
-        "id": 1,
-        "brand": "Toyota",
-        "model": "Camry",
-        "year": 2022,
-        "color": "White",
-        "price": 350000000,
-        "mileage": 15000,
-        "fuelType": "Gasoline",
-        "transmission": "Automatic",
-        "description": "Xe Toyota Camry 2022, màu trắng, số tự động, đã chạy 15,000km",
-        "isAvailable": true,
-        "createdAt": "2024-01-01T10:00:00",
-        "updatedAt": "2024-01-01T10:00:00"
-      }
-    ],
-    "totalPages": 1,
-    "totalElements": 5,
-    "currentPage": 0,
-    "pageSize": 10,
-    "hasNext": false,
-    "hasPrevious": false
-  },
-  "timestamp": "2024-01-01T10:00:00"
-}
-```
-
-## 🏛️ Kiến trúc Clean Architecture
-
-### 1. Domain Layer
-- **Entities**: Chứa business logic core
-- **Repository Interfaces**: Định nghĩa contract cho data access
-
-### 2. Application Layer
-- **Use Cases**: Chứa business logic của ứng dụng
-- **DTOs**: Data transfer objects cho application layer
-
-### 3. Infrastructure Layer
-- **Repository Implementations**: Triển khai data access
-- **Configuration**: Cấu hình Spring beans và DI
-
-### 4. Presentation Layer
-- **Controllers**: REST API endpoints
-- **DTOs**: Request/Response objects cho API
-
-## 🔧 Dependency Injection
-
-Sử dụng Spring's `@Configuration` để cấu hình DI:
-
+### UseCase Example
 ```java
-@Configuration
-@RequiredArgsConstructor
-public class ApplicationConfig {
-    
-    @Bean
-    @Primary
-    public CarRepository carRepository(CarJpaRepository carJpaRepository) {
-        return new CarRepositoryImpl(carJpaRepository);
+@Service
+public class GetCarDetailUseCase {
+    public Either<Failure, CarDto> getCarDetail(UUID id) {
+        return ExecuteUseCase.execute(
+            () -> {
+                Car car = repo.findById(id)
+                    .orElseThrow(() -> new ResourceNotFoundException("Car", id));
+                return Either.right(convertToDto(car));
+            },
+            "GetCarDetailUseCase.getCarDetail",
+            "Failed to get car detail"
+        );
     }
 }
 ```
 
-## 🛠️ Công nghệ sử dụng
-
-- **Spring Boot 3.5.6**
-- **Spring Data JPA**
-- **PostgreSQL**
-- **Lombok**
-- **Spring Validation**
-- **Maven**
-
-## 📝 Dữ liệu mẫu
-
-Ứng dụng sẽ tự động tạo 5 xe mẫu khi khởi động lần đầu:
-- Toyota Camry 2022
-- Honda Civic 2023  
-- Ford Focus 2021
-- BMW X5 2023
-- Mercedes C-Class 2022
-
-## 🔍 Testing
-
-```bash
-# Chạy tests
-./mvnw test
-
-# Chạy tests với coverage
-./mvnw test jacoco:report
+### Controller Example
+```java
+@GetMapping("/{id}")
+public ResponseEntity<ApiResponse<CarDto>> getCarDetail(@PathVariable UUID id) {
+    Either<Failure, CarDto> result = useCase.getCarDetail(id);
+    return EitherResponseHelper.toResponse(result, "Get car successfully");
+}
 ```
 
-## 📋 Lưu ý
+## 🧪 Testing
 
-- Đảm bảo PostgreSQL đang chạy trước khi start ứng dụng
-- Port mặc định: 8080
-- Database: testdb
-- Username/Password: postgres/postgres
+### Run Tests
+```bash
+# All tests
+./mvnw test
+
+# Specific test class
+./mvnw test -Dtest=GetCarListUseCaseTest
+
+# Integration tests
+./mvnw test -Dtest=*IntegrationTest
+```
+
+### Test API
+```bash
+# Using the provided script
+chmod +x test-api.sh
+./test-api.sh
+```
+
+## 🗃️ Database Schema
+
+The application uses a comprehensive PostgreSQL schema with:
+- **Normalized tables** for makes, models, trims, body types, etc.
+- **Car listings** with relationships
+- **car_listings view** for optimized read operations
+- **Triggers** for automatic timestamp updates
+- **Indexes** for performance
+
+Key tables:
+- `makes` - Car manufacturers
+- `models` - Car models
+- `trims` - Car trim levels
+- `body_types` - Vehicle body types
+- `transmissions` - Transmission types
+- `conditions` - Vehicle conditions
+- `dealers` - Car dealers
+- `badges` - Special offer badges
+- `cars` - Car listings
+- `car_badges` - Many-to-many relationship
+
+## 🔧 Development
+
+### Project Structure
+```
+src/main/java/com/example/autotrader/
+├── application/          # Application layer
+│   ├── dtos/            # Data Transfer Objects
+│   └── usecases/        # Business use cases
+├── core/                # Core utilities
+│   ├── data/            # Either pattern classes
+│   ├── exceptions/      # Custom exceptions
+│   ├── usecase/         # ExecuteUseCase utility
+│   └── utilities/       # Helper utilities
+├── domain/              # Domain layer
+│   ├── entities/        # Domain entities
+│   └── repositories/    # Repository interfaces
+├── infrastructure/      # Infrastructure layer
+│   ├── config/          # Configuration
+│   ├── repositories/    # JPA implementations
+│   └── specifications/  # JPA Specifications
+└── presentation/        # Presentation layer
+    ├── controllers/     # REST controllers
+    └── dtos/           # Request/Response DTOs
+```
+
+### Key Components
+
+#### Either Pattern
+- `Either<Failure, T>` - Type-safe error handling
+- `Failure` - Structured error representation
+- `ExecuteUseCase` - Exception to Either conversion
+- `EitherResponseHelper` - Clean controller responses
+
+#### Performance Optimizations
+- `CarListingView` - Database view entity
+- `CarListingViewSpecification` - Optimized filtering
+- Single query for listings vs N+1 problem
+
+## 🚀 Performance
+
+### Before (Traditional JPA)
+- **31+ queries** for 10 cars with relationships
+- N+1 query problem
+- Lazy loading issues
+
+### After (Database Views)
+- **1 query** for 10 cars with all data
+- Pre-computed JOINs
+- Optimized read performance
+
+## 📖 Documentation
+
+- [API Documentation](API_DOCUMENTATION.md)
+- [Either Pattern Guide](EITHER_PATTERN_GUIDE.md)
+- [Database Schema](database-schema.sql)
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+
+## 🙏 Acknowledgments
+
+- **Spring Boot** team for the amazing framework
+- **PostgreSQL** community for the robust database
+- **Clean Architecture** principles by Uncle Bob
+- **Either pattern** inspiration from functional programming
+
+## 📞 Support
+
+If you have any questions or need help:
+- Open an [Issue](https://github.com/yourusername/autotrader/issues)
+- Check the [Documentation](API_DOCUMENTATION.md)
+- Review [Examples](EITHER_PATTERN_GUIDE.md)
+
+---
