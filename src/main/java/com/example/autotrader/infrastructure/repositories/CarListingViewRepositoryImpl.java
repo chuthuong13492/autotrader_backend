@@ -53,24 +53,12 @@ public class CarListingViewRepositoryImpl implements CarListingViewRepository {
         return jpaRepository.existsById(id);
     }
     
-    /**
-     * Find all car listings with custom specification (for filtering)
-     * This method is used internally by the use cases
-     * 
-     * @param spec specification for filtering
-     * @param pageable pagination and sorting
-     * @return Page of filtered car listings
-     */
+    @Override
     public Page<CarListingView> findAll(Specification<CarListingView> spec, Pageable pageable) {
         return jpaRepository.findAll(spec, pageable);
     }
     
-    /**
-     * Count car listings with custom specification (for filtering)
-     * 
-     * @param spec specification for filtering
-     * @return count of filtered car listings
-     */
+    @Override
     public long count(Specification<CarListingView> spec) {
         return jpaRepository.count(spec);
     }

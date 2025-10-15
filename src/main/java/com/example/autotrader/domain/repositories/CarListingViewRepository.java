@@ -1,5 +1,5 @@
 package com.example.autotrader.domain.repositories;
-
+import org.springframework.data.jpa.domain.Specification;
 import com.example.autotrader.domain.entities.CarListingView;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

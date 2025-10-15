@@ -8,6 +8,7 @@ import com.example.autotrader.core.data.Failure;
 import com.example.autotrader.core.usecase.ExecuteUseCase;
 import com.example.autotrader.domain.entities.CarListingView;
 import com.example.autotrader.domain.repositories.CarListingViewRepository;
+import com.example.autotrader.infrastructure.specifications.CarListingViewSpecification;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
