@@ -8,22 +8,18 @@ import org.springframework.stereotype.Repository;
 import java.util.UUID;
 
 /**
- * Repository for querying car_listings view
+ * Spring Data JPA repository for CarListingView
  * 
- * This view provides optimized read operations with:
- * - All joins pre-computed
- * - Denormalized data
- * - Single query performance
+ * This is the low-level JPA repository that handles:
+ * - Database operations on car_listings view
+ * - Specification-based dynamic queries
+ * - Basic CRUD operations
  * 
- * Use this for:
- * - Search/List operations (GET /api/v1/cars/search)
- * - Display operations
- * 
- * Do NOT use for:
- * - Create/Update/Delete operations (use Car entity instead)
+ * This repository is used by CarListingViewRepositoryImpl
+ * and should not be used directly by use cases.
  */
 @Repository
-public interface CarListingViewRepository extends 
+public interface CarListingViewJpaRepository extends 
     JpaRepository<CarListingView, UUID>, 
     JpaSpecificationExecutor<CarListingView> {
     
@@ -31,5 +27,6 @@ public interface CarListingViewRepository extends
     // - findAll(Specification<CarListingView> spec, Pageable pageable)
     // - findById(UUID id)
     // - count(Specification<CarListingView> spec)
+    // - existsById(UUID id)
+    // - save() methods (but shouldn't be used for views)
 }
-

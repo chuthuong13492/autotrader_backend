@@ -1,7 +1,10 @@
 package com.example.autotrader.infrastructure.config;
 
 import com.example.autotrader.domain.repositories.CarRepository;
+import com.example.autotrader.domain.repositories.CarListingViewRepository;
 import com.example.autotrader.infrastructure.repositories.CarRepositoryImpl;
+import com.example.autotrader.infrastructure.repositories.CarListingViewRepositoryImpl;
+import com.example.autotrader.infrastructure.repositories.CarListingViewJpaRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +24,15 @@ public class ApplicationConfig {
     @Primary
     public CarRepository carRepository(com.example.autotrader.infrastructure.repositories.CarJpaRepository carJpaRepository) {
         return new CarRepositoryImpl(carJpaRepository);
+    }
+    
+    /**
+     * Cấu hình Dependency Injection cho CarListingViewRepository
+     * Domain repository cho car_listings view
+     */
+    @Bean
+    public CarListingViewRepository carListingViewRepository(CarListingViewJpaRepository carListingViewJpaRepository) {
+        return new CarListingViewRepositoryImpl(carListingViewJpaRepository);
     }
     
     /**

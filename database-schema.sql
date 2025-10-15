@@ -1,6 +1,5 @@
 -- ============================================
 -- AUTOTRADER COMPLETE DATABASE SETUP
--- PostgreSQL Schema + Tất cả 60 cars từ mock-data.ts
 -- ============================================
 
 -- Enable UUID extension for generating UUIDs

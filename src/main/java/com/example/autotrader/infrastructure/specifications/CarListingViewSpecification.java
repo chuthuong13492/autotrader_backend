@@ -18,6 +18,14 @@ import java.util.List;
  */
 public class CarListingViewSpecification {
     
+    /**
+     * Create an always-true specification (no filters)
+     * Used for basic findAll operations
+     */
+    public static Specification<CarListingView> alwaysTrue() {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.conjunction();
+    }
+    
     public static Specification<CarListingView> filterByCriteria(CarFilterCriteria criteria) {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();

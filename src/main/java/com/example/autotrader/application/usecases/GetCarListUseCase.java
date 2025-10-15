@@ -7,8 +7,7 @@ import com.example.autotrader.core.data.Either;
 import com.example.autotrader.core.data.Failure;
 import com.example.autotrader.core.usecase.ExecuteUseCase;
 import com.example.autotrader.domain.entities.CarListingView;
-import com.example.autotrader.infrastructure.repositories.CarListingViewRepository;
-import com.example.autotrader.infrastructure.specifications.CarListingViewSpecification;
+import com.example.autotrader.domain.repositories.CarListingViewRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,13 +27,6 @@ import java.util.stream.Collectors;
 
 /**
  * Use case to get car listings from car_listings view
- * 
- * Performance improvement:
- * - Before: 1 + (N × relationships) queries = ~31 queries for 10 cars
- * - After: 1 query only for 10 cars
- * 
- * Uses car_listings view which has all JOINs pre-computed
- * Returns Either<Failure, T> for type-safe error handling
  */
 @Service
 @RequiredArgsConstructor
@@ -76,6 +68,7 @@ public class GetCarListUseCase {
         Pageable pageable = buildPageable(criteria);
 
         // Query from car_listings view - SINGLE QUERY!
+        // Use specification for dynamic filtering
         Page<CarListingView> carPage = carListingViewRepository.findAll(
             CarListingViewSpecification.filterByCriteria(criteria), 
             pageable
