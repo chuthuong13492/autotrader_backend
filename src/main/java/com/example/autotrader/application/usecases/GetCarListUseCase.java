@@ -2,7 +2,6 @@ package com.example.autotrader.application.usecases;
 
 import com.example.autotrader.application.dtos.CarDto;
 import com.example.autotrader.application.dtos.CarFilterCriteria;
-import com.example.autotrader.application.dtos.CarListResponseDto;
 import com.example.autotrader.core.data.Either;
 import com.example.autotrader.core.data.Failure;
 import com.example.autotrader.core.usecase.ExecuteUseCase;
@@ -12,8 +11,10 @@ import com.example.autotrader.infrastructure.specifications.CarListingViewSpecif
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import com.example.autotrader.core.data.Pagination;
 
 /**
  * Use case to get car listings from car_listings view
@@ -42,7 +45,7 @@ public class GetCarListUseCase {
      * @param criteria Filter criteria
      * @return Either with Failure or CarListResponseDto
      */
-    public Either<Failure, CarListResponseDto> execute(CarFilterCriteria criteria) {
+    public Either<Failure, Pagination<CarDto>> execute(CarFilterCriteria criteria) {
         return ExecuteUseCase.execute(
             () -> executeSearch(criteria),
             "GetCarListUseCase.execute",
@@ -53,7 +56,7 @@ public class GetCarListUseCase {
     /**
      * Internal method to execute search logic
      */
-    private Either<Failure, CarListResponseDto> executeSearch(CarFilterCriteria criteria) {
+    private Either<Failure, Pagination<CarDto>> executeSearch(CarFilterCriteria criteria) {
         log.info("Executing GetCarListUseCase with criteria: {}", criteria);
 
         // Validate criteria
@@ -75,7 +78,7 @@ public class GetCarListUseCase {
             pageable
         );
 
-        CarListResponseDto response = buildCarListResponse(carPage);
+        Pagination<CarDto> response = buildPaginationResponse(carPage);
         
         return Either.right(response);
     }
@@ -110,21 +113,17 @@ public class GetCarListUseCase {
         };
     }
 
-    private CarListResponseDto buildCarListResponse(Page<CarListingView> carPage) {
-        List<CarDto> carDtos = carPage.getContent().stream()
-                .map(this::convertToDto)
-                .collect(Collectors.toList());
-
-        return CarListResponseDto.builder()
-                .cars(carDtos)
-                .totalPages(carPage.getTotalPages())
-                .totalElements(carPage.getTotalElements())
-                .currentPage(carPage.getNumber())
-                .pageSize(carPage.getSize())
-                .hasNext(carPage.hasNext())
-                .hasPrevious(carPage.hasPrevious())
-                .build();
-    }
+            private Pagination<CarDto> buildPaginationResponse(Page<CarListingView> carPage) {
+                List<CarDto> carDtos = carPage.getContent().stream()
+                        .map(this::convertToDto)
+                        .collect(Collectors.toList());
+                return Pagination.of(
+                        carDtos,
+                        carPage.getNumber() + 1, 
+                        carPage.getSize(),
+                        carPage.getTotalElements()
+                );
+            }
 
     /**
      * Convert CarListingView to CarDto
