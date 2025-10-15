@@ -42,9 +42,9 @@ A modern, high-performance car trading platform built with **Spring Boot 3**, **
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                    Presentation Layer                       │
-│  - REST Controllers                                          │
-│  - Request/Response DTOs                                     │
-│  - EitherResponseHelper for clean error handling             │
+│  - REST Controllers                                         │
+│  - Request/Response DTOs                                    │
+│  - EitherResponseHelper for clean error handling            │
 └─────────────────────────────────────────────────────────────┘
                               ↓
 ┌─────────────────────────────────────────────────────────────┐
@@ -56,7 +56,7 @@ A modern, high-performance car trading platform built with **Spring Boot 3**, **
                               ↓
 ┌─────────────────────────────────────────────────────────────┐
 │                      Domain Layer                           │
-│  - Entities                                                  │
+│  - Entities                                                 │
 │  - Repository Interfaces                                    │
 │  - Business Rules                                           │
 └─────────────────────────────────────────────────────────────┘
@@ -80,7 +80,7 @@ A modern, high-performance car trading platform built with **Spring Boot 3**, **
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/yourusername/autotrader.git
+git clone https://github.com/chuthuong13492/autotrader_backend.git
 cd autotrader
 ```
 
@@ -301,7 +301,7 @@ src/main/java/com/example/autotrader/
 ## 📞 Support
 
 If you have any questions or need help:
-- Open an [Issue](https://github.com/yourusername/autotrader/issues)
+- Open an [Issue](https://github.com/chuthuong13492/autotrader_backend/issues)
 - Check the [Documentation](API_DOCUMENTATION.md)
 - Review [Examples](EITHER_PATTERN_GUIDE.md)
 
